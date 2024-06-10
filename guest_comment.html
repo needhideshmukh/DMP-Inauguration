@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Guest Inauguration Comment</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <section>
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="gradient"></div>
+            <div class="form-container">
+              <form class="form-content " id="guessCommentID">
+                <div class="flex-container">
+                <div class="form-group textinaugrh">
+                  <h1 class="head">Hello,</h1>
+                  <h1 class="head" id="nameid"></h1>
+                  <label for="inaugurationComment">Please inaugrate the event with your comments</label>
+                  <br />
+             
+
+              <textarea   
+                id="inaugurationComment"
+              name="inaugurationComment"
+              placeholder="Inauguration Comment"  rows="4" cols="50"></textarea>
+              <div id="charCount" class="counter">0/150 characters</div>
+                  <!-- <input
+                    type="text"
+                    id="inaugurationComment"
+                    name="inaugurationComment"
+                    placeholder="Inauguration Comment"
+                    required
+                  /> -->
+                </div>
+                
+                <div class="inaugbtn">
+         
+                  <button
+                    type="button"
+                    class="gradient-button"
+                    onclick="guestComment()"
+                  >
+                    Inaugurate the Event
+                  </button>
+          
+              </div>
+            </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+    const textarea = document.getElementById('inaugurationComment');
+    const charCountDiv = document.getElementById('charCount');
+    const maxChars = 150;
+    textarea.addEventListener('input', function() {
+        const charCount = this.value.length;
+        if (charCount > maxChars) {
+            this.value = this.value.substring(0, maxChars);
+        }
+        charCountDiv.innerText = `${this.value.length}/${maxChars} characters`;
+    })
+
+    function getQueryName() {
+            const hashdata = window.location.hash.substring(1)
+            const params = new URLSearchParams(hashdata)
+            const name = params.get('name');
+            const namediv = document.getElementById("nameid");
+            namediv.innerText = name;
+        }
+        window.onload = getQueryName;
+
+      function getHashParams() {
+        const hash = window.location.hash.substring(1)
+        const params = new URLSearchParams(hash)
+        return {
+          email: params.get("email"),
+          identifier: params.get("identifier"),
+          document_hash: params.get("document_hash"),
+          name: params.get("name"),
+        }
+      }
+
+      function guestComment() {
+        const hashParams = getHashParams()
+        console.log(hashParams)
+        const comment = document.getElementById("inaugurationComment").value
+
+        console.log(comment)
+        console.log("Email:", hashParams.email)
+        console.log("Identifier:", hashParams.identifier)
+        console.log("Document Hash:", hashParams.document_hash)
+        console.log("Name:", hashParams.name)
+        console.log("Input Field:", comment)
+        
+
+        const data = {
+          email: hashParams.email,
+          identifier: hashParams.identifier,
+          document_hash: hashParams.document_hash,
+          comment: comment,
+        }
+        console.log("here data sent",data);
+
+        fetch("https://api.demo.dhiway.com/api/v1/dmp/witness", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => {
+            console.log("here",response);
+            // if (!response.ok) {
+            //   throw new Error("Network response was not ok")
+            // }
+            alert("Inaugrated sent successfully!")
+            // form.reset() // Reset the form after successful submission
+          })
+          .catch((error) => {
+            console.error(
+              "There was a problem with your fetch operation:",
+              error
+            )
+          })
+      }
+    </script>
+  </body>
+</html>
